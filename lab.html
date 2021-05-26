@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	
+    <head>
+		<style>
+		body,html {
+			padding: 0;
+			margin: 0;
+		}
+		
+		</style>
+		
+        <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    </head>
+    <body>
+        <div id="root"></div>
+        
+        <script type="text/babel">
+		
+            const htmlRoot = document.getElementById('root')
+
+            const Main = () => {
+			
+			  const mainStyle = {
+				display: 'flex',
+				width: '100vw',
+                height: '100vh',
+				justifyContent: 'space-around',
+				alignItems: 'center',
+				flexDirection: 'column',
+				backgroundImage: 'url(https://blenderartists.org/uploads/default/original/4X/7/e/2/7e2d7bea4ac21388c4a96e1371f375c4ce00094b.jpg)',
+				backgroundRepeat: 'no-repeat',
+				backgroundSize: 'cover'
+			  }
+			  
+			  const divStyle = {
+				display: 'flex',
+				width: '50%',
+                height: '50%',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				flexDirection: 'column'
+			  }
+			  
+              return (
+				  
+                <div style={mainStyle}>
+					
+					<div style={divStyle}>
+
+						<BtnDif leng={4} height={4} dif={'Facil'}/>
+						<BtnDif leng={8} height={8} dif={'Medio'}/>
+						<BtnDif leng={12} height={12} dif={'Dificil'}/>
+
+					</div>
+                </div>
+              )
+            }	
+
+			const BtnDif = ({leng, height, dif}) => {
+              const btnstyle = {
+				display: 'flex',
+                width: '30%',
+                height: '20%',
+				alignItems: 'center',
+				justifyContent: 'center',
+				fontSize: '25px',
+				fontFamily: 'courier, sans-serif'
+              }
+
+			  const ruta = 'maze.html?largo=' + leng + '&alto=' + height
+			  
+			  const handleButttonClick = ({event}) => {
+					location.href = ruta
+			  }
+			  
+              return <button style = {btnstyle} href = {ruta} onClick={handleButttonClick}> {dif} </button>
+            }
+			
+            ReactDOM.render(
+                <Main />,
+                htmlRoot
+            ) 
+        </script>
+    </body>
+</html>

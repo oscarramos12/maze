@@ -1,0 +1,263 @@
+<html>
+    <head>
+		<style>
+		body,html {
+			padding: 0;
+			margin: 0;
+		}
+		</style>
+        <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    </head>
+    <body>
+		
+        <div id="root"></div>
+        
+        <script type="text/babel">
+            const htmlRoot = document.getElementById('root')
+			
+			const Navegador = () =>{
+			    
+				const MiFigura = ({tipo}) => {
+					const miSize = () => {
+						if(tipo === 'p'){
+							return 'contain'
+						}
+						else{
+							return 'cover'
+						}
+					}
+					
+					const direccion = () => {switch(tipo) {
+					  case 'p':
+						return 'https://66.media.tumblr.com/5c56bf25fafc43d473d73cb4da4a35fe/tumblr_mfi0zq4lkO1rfjowdo1_500.gif'
+					  case 'g':
+						return 'https://i.pinimg.com/originals/72/30/17/7230177166a5f5354a01824e6dc78f7c.gif'
+					  case ' ':
+						return 'https://oceanic.global/wp-content/uploads/2021/02/black-square.jpg'
+					  default:
+						return 'https://miro.medium.com/max/600/0*Ykr6y1RLhKOoFX3i.png'
+					}}
+					
+					  const style = {
+
+						backgroundImage: `url(${direccion(tipo)}) , url(https://i.pinimg.com/originals/7c/cb/01/7ccb010d8fddc4bcd84587ef3c34d100.jpg)`,
+						backgroundRepeat: 'no-repeat',
+						backgroundSize: `${miSize(tipo)}, cover`
+
+					}
+
+					  return <div style={style} />
+
+				}
+
+
+				const Maze = () => {
+
+				  const [mazeData, setMazeData] = React.useState([])
+				  const [mazeTimes, setMazeTimes] = React.useState(0)
+				  const mazeRef = React.createRef()
+				  const [mazeFinish, setMazeFinish] = React.useState(false)
+				  const w = (new URLSearchParams(location.search)).get('largo')
+				  const h = (new URLSearchParams(location.search)).get('alto')
+				  
+				  const posicion2d = (array, item) => {
+					for (let i = 0; i<array.length; i++){
+						for (let j = 0; j<array[i].length; j++){
+							if(array[i][j] === item) {
+								return [i,j]
+							}
+						}
+					}
+				  }
+				  
+				  const gridStyle = {
+					display: 'grid',
+					gridTemplateColumns: `repeat(${w*3+1},${(100/(w*3+1))-0.1}vw)`,
+					gridTemplateRows: `repeat(${h*2+1},${(100/(h*2+1))-0.11}vh)`,
+					justifyContent: 'strech'
+				  }
+					
+				  React.useEffect(() => {
+					  if(mazeData.length === 0){
+						const url = 'http://ubeje.xyz:3001/?type=json&w='+w+'&h='+h
+						console.log(url)
+						fetch(url)
+						  .then(r => r.json())
+						  .then(r => setMazeData(r))
+						mazeRef.current.focus()
+					  }
+					  if(mazeData.length !== 0){
+						setMazeTimes(mazeTimes + 1)
+					  }
+					  if(mazeFinish === true){
+						setScreen(SCREENS.END(mazeTimes))
+					  }
+				  }, [mazeData])
+
+				  const handleKeyDown = (event) => {
+					if (event.key === 'ArrowRight') {
+					  setMazeData((oldValue) => {
+						let newValue = [...oldValue]
+						const playerPos = posicion2d(newValue,'p')
+						if (newValue[playerPos[0]][playerPos[1]+1]==='g'){
+							newValue[playerPos[0]][playerPos[1]+1] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							setMazeFinish(!mazeFinish)
+							return newValue
+						}
+						if (newValue[playerPos[0]][playerPos[1]+1]===' '){
+							newValue[playerPos[0]][playerPos[1]+1] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							return newValue
+						} else {
+							return oldValue
+						}
+					  })
+					}
+					
+					if (event.key === 'ArrowUp') {
+					  setMazeData((oldValue) => {
+						let newValue = [...oldValue]
+						const playerPos = posicion2d(newValue,'p')
+						if (newValue[playerPos[0]-1][playerPos[1]]==='g'){
+							newValue[playerPos[0]-1][playerPos[1]] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							setMazeFinish(!mazeFinish)
+							return newValue
+						}
+						if (newValue[playerPos[0]-1][playerPos[1]]===' '){
+							newValue[playerPos[0]-1][playerPos[1]] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							return newValue
+						} else {
+							return oldValue
+						}
+					  })
+					}
+					
+					if (event.key === 'ArrowDown') {
+					  setMazeData((oldValue) => {
+						let newValue = [...oldValue]
+						const playerPos = posicion2d(newValue,'p')
+						if (newValue[playerPos[0]+1][playerPos[1]]==='g'){
+							newValue[playerPos[0]+1][playerPos[1]] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							setMazeFinish(!mazeFinish)
+							return newValue
+						}
+						if (newValue[playerPos[0]+1][playerPos[1]]===' '){
+							newValue[playerPos[0]+1][playerPos[1]] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							return newValue
+						} else {
+							return oldValue
+						}
+					  })
+					}
+					
+					if (event.key === 'ArrowLeft') {
+					  setMazeData((oldValue) => {
+						let newValue = [...oldValue]
+						const playerPos = posicion2d(newValue,'p')
+						if (newValue[playerPos[0]][playerPos[1]-1]==='g'){
+							newValue[playerPos[0]][playerPos[1]-1] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							setMazeFinish(!mazeFinish)
+							return newValue
+						}
+						if (newValue[playerPos[0]][playerPos[1]-1]===' '){
+							newValue[playerPos[0]][playerPos[1]-1] = 'p'
+							newValue[playerPos[0]][playerPos[1]] = ' '
+							return newValue
+						} else {
+							return oldValue
+						}
+					  })
+					}
+				}
+				  
+				  return (
+							<div tabIndex="4" style={gridStyle} onKeyDown={handleKeyDown} ref={mazeRef}>
+							  {mazeData.map((row) => {
+							  
+								return (
+								<React.Fragment>
+									{row.map((cell) => {
+									  return <MiFigura tipo={cell}/>
+									})}
+								</React.Fragment>
+								)
+							  })}
+							</div>
+						)
+				}
+				
+				const End = ({pasos}) => {
+
+					  const endStyle = {
+					  display: 'flex',
+						width: '100vw',
+						height: '100vh',
+						alignItems: 'center',
+						flexDirection: 'column',
+						backgroundImage: 'url(https://i.pinimg.com/originals/00/55/91/005591987fd93d998e6815f65b899c8f.jpg)',
+						backgroundRepeat: 'no-repeat',
+						backgroundSize: 'cover'
+					  } 
+
+					  const backgstyle = {
+						top: '25%',
+						position: 'fixed',
+						width: '100%',
+						height: '100%',
+						justifyContent: 'flex-start',
+						flexDirection: 'row',
+						display: 'flex'
+					  }
+					  
+					  const mensajeStyle = {
+						top: '40%',
+						marginLeft: '35%',
+						width: '25%',
+						fontFamily: 'courier,sans-serif',
+						height: '25%',
+						fontSize: '30px',
+						backgroundImage: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 50%)',
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center'
+					  }
+
+				  return (
+					  <div style={endStyle}>
+
+					    <div style={backgstyle}>
+
+							<div style={mensajeStyle}>GANASTE CON {pasos} PASOS!</div>
+							
+						</div>
+					  </div>
+				  )
+				}
+				
+				const SCREENS = {
+					END: (pasos) => { return (<End pasos={pasos}/>) },
+					MAZE: () => { return (<Maze />) }
+				}
+				const [screen, setScreen] = React.useState(SCREENS.MAZE)
+				
+				return (
+					<div>
+						{screen}
+					</div>
+				)
+			}
+			ReactDOM.render(
+				<Navegador />,
+				htmlRoot
+            ) 
+        </script>
+    </body>
+</html>
